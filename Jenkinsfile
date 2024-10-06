@@ -37,7 +37,7 @@ pipeline {
                     POSTGRES_DB=${POSTGRES_DB}
                     POSTGRES_USER=${POSTGRES_USER}
                     POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-                    CONNECTION_STRING=Host=db;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};Port=5432;
+                    CONNECTION_STRING=Host=db;Database=${env.POSTGRES_DB};Username=${env.POSTGRES_USER};Password=${env.POSTGRES_PASSWORD};Port=5432;
                     """
 
                     // Run Docker Compose

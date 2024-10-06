@@ -11,6 +11,8 @@ WORKDIR /src
 # Copy the project file and restore as distinct layers
 COPY ["riga.services.csproj", "./"]
 RUN dotnet restore "./riga.services.csproj"
+RUN dotnet tool install --global dotnet-ef
+
 
 # Copy everything else and build the API
 COPY . .
