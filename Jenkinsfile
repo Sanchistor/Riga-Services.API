@@ -66,15 +66,22 @@ pipeline {
     post {
         always {
             // Clean up Docker images and containers (optional)
-            sh "docker system prune -f"
+            script {
+                // Wrap this in a node context to avoid context errors
+                sh "docker system prune -f"
+            }
         }
         success {
-            // Notify of successful build (optional)
-            echo "Pipeline succeeded!"
+            script {
+                // Notify of successful build (optional)
+                echo "Pipeline succeeded!"
+            }
         }
         failure {
-            // Notify of failed build (optional)
-            echo "Pipeline failed!"
+            script {
+                // Notify of failed build (optional)
+                echo "Pipeline failed!"
+            }
         }
     }
 }
