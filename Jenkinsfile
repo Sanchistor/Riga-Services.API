@@ -13,7 +13,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Pull the latest code from GitHub
-                git 'https://github.com/Sanchistor/Riga-Services.API.git'
+                git branch: 'main', url: 'https://github.com/Sanchistor/Riga-Services.API.git'
             }
         }
 
