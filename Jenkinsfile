@@ -43,17 +43,31 @@ pipeline {
                     // Run Docker Compose
                     sh "docker-compose up -d --build"
                     
-                    // Now run migrations
-                                sh """
-                                docker run --rm \
-                                  --network app-network \
-                                  -e ASPNETCORE_ENVIRONMENT=Production \
-                                  -e CONNECTION_STRING=${CONNECTION_STRING} \
-                                  ${DOCKER_IMAGE} \
-                                  dotnet ef database update
-                                """
+            }
+        }
+        
+        stage('Apply Database Migrations') {
+            steps {
+                script {
+                    // Debugging output
+                    echo "Connection String: ${CONNECTION_STRING}"
+                    echo "Docker Image: ${DOCKER_IMAGE}"
+                    echo "Running migration with command:"
+                    def migrationCommand = """
+                    docker run --rm \
+                      --network app-network \
+                      -e ASPNETCORE_ENVIRONMENT=Production \
+                      -e CONNECTION_STRING=${CONNECTION_STRING} \
+                      ${DOCKER_IMAGE} \
+                      dotnet ef database update
+                    """
+                    echo migrationCommand
+        
+                    // Run migrations
+                    sh migrationCommand
                 }
             }
         }
+
     }
 }
