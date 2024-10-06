@@ -42,7 +42,7 @@ pipeline {
 
                     // Run Docker Compose
                     sh "docker-compose up -d --build"
-                    
+                }
             }
         }
         
