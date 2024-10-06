@@ -63,25 +63,30 @@ pipeline {
         }
     }
 
-    post {
-        always {
-            // Clean up Docker images and containers (optional)
-            script {
-                // Wrap this in a node context to avoid context errors
-                sh "docker system prune -f"
-            }
-        }
-        success {
-            script {
-                // Notify of successful build (optional)
-                echo "Pipeline succeeded!"
-            }
-        }
-        failure {
-            script {
-                // Notify of failed build (optional)
-                echo "Pipeline failed!"
-            }
-        }
-    }
+   post {
+       always {
+           node {
+               // Clean up Docker images and containers (optional)
+               script {
+                   sh "docker system prune -f"
+               }
+           }
+       }
+       success {
+           node {
+               script {
+                   // Notify of successful build (optional)
+                   echo "Pipeline succeeded!"
+               }
+           }
+       }
+       failure {
+           node {
+               script {
+                   // Notify of failed build (optional)
+                   echo "Pipeline failed!"
+               }
+           }
+       }
+   }
 }
