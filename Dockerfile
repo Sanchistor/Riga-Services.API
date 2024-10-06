@@ -12,7 +12,7 @@ WORKDIR /src
 COPY ["riga.services.csproj", "./"]
 RUN dotnet restore "./riga.services.csproj"
 RUN dotnet tool install --global dotnet-ef --version 7.0.5
-
+ENV PATH="${PATH}:/root/.dotnet/tools"
 
 # Copy everything else and build the API
 COPY . .
