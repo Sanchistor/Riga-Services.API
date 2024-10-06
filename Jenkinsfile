@@ -9,7 +9,7 @@ pipeline {
         CONNECTION_STRING = "Host=db;Database=${env.POSTGRES_DB};Username=${env.POSTGRES_USER};Password=${env.POSTGRES_PASSWORD};Port=5432;"
     }
 
-    stages {    
+    stages {
         stage('Checkout') {
             steps {
                 // Pull the latest code from GitHub
@@ -52,22 +52,15 @@ pipeline {
                     // Debugging output
                     echo "Connection String: ${CONNECTION_STRING}"
                     echo "Docker Image: ${DOCKER_IMAGE}"
-                    echo "Running migration with command:"
-                    def migrationCommand = """
-                    docker run --rm \
-                      --network app-network \
-                      -e ASPNETCORE_ENVIRONMENT=Production \
-                      -e CONNECTION_STRING=${CONNECTION_STRING} \
-                      ${DOCKER_IMAGE} \
-                      dotnet ef database update
-                    """
-                    echo migrationCommand
-        
+
                     // Run migrations
-                    sh migrationCommand
+                    sh """
+                    docker exec -it apirigaservices-web-1 \
+                      dotnet ef database update --environment Production \
+                      --connection "${CONNECTION_STRING}"
+                    """
                 }
             }
         }
-
     }
 }
