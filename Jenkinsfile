@@ -62,25 +62,4 @@ pipeline {
             }
         }
     }
-
-    post {
-        always {
-            script {
-                // Clean up Docker images and containers (optional)
-                sh "docker system prune -f"
-            }
-        }
-        success {
-            script {
-                // Notify of successful build (optional)
-                echo "Pipeline succeeded!"
-            }
-        }
-        failure {
-            script {
-                // Notify of failed build (optional)
-                echo "Pipeline failed!"
-            }
-        }
-    }
 }
