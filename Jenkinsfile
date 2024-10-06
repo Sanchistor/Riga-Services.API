@@ -6,10 +6,10 @@ pipeline {
         POSTGRES_DB = credentials('database_name')
         POSTGRES_USER = credentials('database-user')
         POSTGRES_PASSWORD = credentials('postgres-password') // Reference Jenkins credentials
-        CONNECTION_STRING = "Host=db;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};Port=5432;"
+        CONNECTION_STRING = "Host=db;Database=${env.POSTGRES_DB};Username=${env.POSTGRES_USER};Password=${env.POSTGRES_PASSWORD};Port=5432;"
     }
 
-    stages {
+    stages {    
         stage('Checkout') {
             steps {
                 // Pull the latest code from GitHub
@@ -22,22 +22,6 @@ pipeline {
                 script {
                     // Build the Docker image
                     sh "docker build -t ${DOCKER_IMAGE} ."
-                }
-            }
-        }
-
-        stage('Apply Database Migrations') {
-            steps {
-                script {
-                    // Run migrations
-                    sh """
-                    docker run --rm \
-                      --network app-network \
-                      -e ASPNETCORE_ENVIRONMENT=Production \
-                      -e CONNECTION_STRING=${CONNECTION_STRING} \
-                      ${DOCKER_IMAGE} \
-                      dotnet ef database update
-                    """
                 }
             }
         }
@@ -58,6 +42,16 @@ pipeline {
 
                     // Run Docker Compose
                     sh "docker-compose up -d --build"
+                    
+                    // Now run migrations
+                                sh """
+                                docker run --rm \
+                                  --network app-network \
+                                  -e ASPNETCORE_ENVIRONMENT=Production \
+                                  -e CONNECTION_STRING=${CONNECTION_STRING} \
+                                  ${DOCKER_IMAGE} \
+                                  dotnet ef database update
+                                """
                 }
             }
         }
