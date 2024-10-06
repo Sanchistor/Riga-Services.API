@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  web:
+    image: riga-services-app:latest  # Change to your Docker image name
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:80"  # Expose port 5000 for your app
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production  # Set the environment to Production
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}  # Use environment variable from .env file
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  db:
+    image: postgres:13  # Use PostgreSQL image
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}  # Reference .env file variables
+      POSTGRES_USER: ${POSTGRES_USER}  # Reference .env file variables
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}  # Reference .env file variables
+    ports:
+      - "5432:5432"  # Expose PostgreSQL
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
