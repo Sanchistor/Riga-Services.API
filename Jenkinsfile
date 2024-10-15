@@ -45,22 +45,5 @@ pipeline {
                 }
             }
         }
-        
-        stage('Apply Database Migrations') {
-            steps {
-                script {
-                    // Debugging output
-                    echo "Connection String: ${CONNECTION_STRING}"
-                    echo "Docker Image: ${DOCKER_IMAGE}"
-        
-                    // Run migrations without -it
-                    sh """
-                    docker exec apirigaservices-web-1 \
-                      dotnet ef database update --environment Production \
-                      --connection "${CONNECTION_STRING}"
-                    """
-                }
-            }
-        }
     }
 }

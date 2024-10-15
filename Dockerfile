@@ -5,7 +5,6 @@ WORKDIR /src
 # Copy project files
 COPY ["riga.services.csproj", "./"]
 RUN dotnet restore "./riga.services.csproj"
-RUN dotnet tool install --global dotnet-ef --version 7.0.5
 
 # Set the PATH for global tools
 ENV PATH="$PATH:/root/.dotnet/tools"
