@@ -30,6 +30,7 @@
 
     <ItemGroup>
       <Folder Include="riga.services.authentication\Queries\" />
+      <Folder Include="riga.services.ticket-manager\Services\" />
     </ItemGroup>
 
     <ItemGroup>

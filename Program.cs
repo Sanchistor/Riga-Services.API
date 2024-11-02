@@ -8,6 +8,8 @@ using riga.services.DbContext;
 using riga.services.riga.services.authentication.IRepositories;
 using riga.services.riga.services.authentication.Repositories;
 using riga.services.riga.services.authentication.Services;
+using riga.services.riga.services.ticket_manager.IRepositories;
+using riga.services.riga.services.ticket_manager.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,6 +50,7 @@ builder.Services.AddDbContext<ApiDbContext>(
 builder.Services.AddMediatR(typeof(Program));
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
+builder.Services.AddScoped<ITicketRepository, TicketRepository>();
 
 var key = "Yh2k7QSu418CZg5p6X3Pna9L0Miy4D3Bvt0JVr87Uc0j69Kqw5R2Nmf4FWs03Hdx";
 builder.Services.AddAuthentication(x =>

@@ -12,5 +12,7 @@ public class ApiDbContext: Microsoft.EntityFrameworkCore.DbContext
         base.OnModelCreating(modelBuilder);
     }
     public virtual DbSet<User> Users { get; set; } = null!;
-
+    public virtual DbSet<BusData> BusData { get; set; } = null!;
+    public virtual DbSet<TicketsInfo> TicketsInfo { get; set; } = null!;
+    public virtual DbSet<UserTickets> UserTickets { get; set; } = null!;
 }
