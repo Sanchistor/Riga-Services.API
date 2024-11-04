@@ -16,38 +16,40 @@ namespace riga.services.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class TicketInfoController : ControllerBase
+    public class BusDataController : ControllerBase
     {
         private readonly IMediator _mediator;
 
-        public TicketInfoController(IMediator mediator)
+        public BusDataController(IMediator mediator)
         {
             _mediator = mediator;
         }
-        
-        // GET: api/Ticket
-        [HttpGet]
-        public async Task<ActionResult<List<AllTicketsTypeResponse>>> GetAllTickets()
+
+        // GET: api/BusData/5
+        [HttpGet( Name = "Get")]
+        public async Task<ActionResult<List<AllBusesResponse>>> Get()
         {
-            var query = new GetAllTicketsQuery();
+            var query = new GetAllBusDataQuery();
             var result = await _mediator.Send(query);
             return Ok(result);
         }
 
-        // POST: api/Ticket
+        // POST: api/BusData
         [HttpPost]
-        public async Task<bool> Post([FromBody] CreateTicketDto createTicketDto)
+        public async Task<bool> Post([FromBody] CreateBusDataDto createBusDataDto)
         {
-            var command = new CreateTicketInfoCommand(createTicketDto);
+            var command = new CreateBusDataCommand(createBusDataDto);
             var result = await _mediator.Send(command);
             return result;
         }
-        
+
+        // DELETE: api/BusData/5
         [HttpDelete("{id}")]
         public async Task<bool> Delete(Guid id)
         {
-            var command = new DeleteTicketInfoCommand(id);
-            return await _mediator.Send(command);
+            var command = new DeleteBusDataCommand(id);
+            var result = await _mediator.Send(command);
+            return result;
         }
     }
 }
