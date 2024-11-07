@@ -47,16 +47,16 @@ public class JwtAuthenticationManager : IJwtAuthenticationManager
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                new Claim(ClaimTypes.Email, email)
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()) // Add User ID as NameIdentifier
+                    //new Claim(ClaimTypes.Email, email) // Optionally keep email claim
                 }),
-                //set duration of token here
-                Expires = DateTime.UtcNow.AddDays(1),
+                Expires = DateTime.UtcNow.AddDays(1), // Set token expiration here
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(tokenKey),
-                    SecurityAlgorithms.HmacSha256Signature) // sha256 algorithm
+                    SecurityAlgorithms.HmacSha256Signature)
             };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
 
+            var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
 
