@@ -37,7 +37,14 @@ public class RegisterTicketCommandHandler: IRequestHandler<RegisterTicketCommand
     {
         var userGuid = _authGuard.GetUserId();
         var ticket = await _ticketRepository.get_user_unregistered_ticket((Guid)userGuid, registerTicketDto.UserTicketId, cancellationToken);
-        //TODO: Validation here for non existing ticket
+        if (ticket == null)
+        {
+            return new RigisteredTicketResponse
+            {
+                Message = "Ticket not found or already registered",
+                Success = false
+            };
+        }
 
         var startDate = DateTime.UtcNow;
         DateTime dueTime = startDate;
@@ -61,7 +68,14 @@ public class RegisterTicketCommandHandler: IRequestHandler<RegisterTicketCommand
         }
 
         var busData = await _ticketRepository.get_bus_data_by_code(registerTicketDto.BusCode, cancellationToken);
-        //TODO: Validation here for non existing bus code
+        if (busData == null)
+        {
+            return new RigisteredTicketResponse
+            {
+                Message = "Bus code not found",
+                Success = false
+            };
+        }
         var updateUserTicketsDto = new UpdateUserTicketsDto
         {
             UserTicketId = ticket.UserTicket.Id,
@@ -80,11 +94,17 @@ public class RegisterTicketCommandHandler: IRequestHandler<RegisterTicketCommand
                 CurrentTime = startDate,
                 TicketType = ticket.TicketType.ToString(),
                 ValidUntil = ticket.UserTicket.DueTime,
-                TicketValid = ticket.UserTicket.Valid
+                TicketValid = ticket.UserTicket.Valid,
+                Success = true,
+                Message = "Ticket registered successfully"
             };
         }
 
-        return null;
+        return new RigisteredTicketResponse
+        {
+            Success = false,
+            Message = "Error occured"
+        };
     }
     
 }

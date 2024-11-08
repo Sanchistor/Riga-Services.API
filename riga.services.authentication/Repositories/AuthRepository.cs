@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using riga.services.DbContext;
 using riga.services.Models;
 using riga.services.riga.services.authentication.DTO;
@@ -35,5 +36,10 @@ public class AuthRepository: IAuthRepository
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
         return Unit.Value;
+    }
+
+    public async Task<User> GetProfile(Guid UserId, CancellationToken cancellationToken)
+    {
+        return await _context.Users.FirstOrDefaultAsync(user => user.Id == UserId, cancellationToken);
     }
 }

@@ -11,7 +11,9 @@ public class User
     public string LastName { get; set; }
     public string Email { get; set; }
     public string Phone { get; set; }
+    [JsonIgnore]
     public string Password { get; set; }
+    [JsonIgnore]
     
     public int Role { get; set; } = 0;
     public double Balance { get; set; } = 0.0;

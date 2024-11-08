@@ -1,5 +1,6 @@
 using riga.services.Models;
 using riga.services.riga.services.ticket_manager.DTO.UserTickets;
+using riga.services.riga.services.ticket_manager.Responses.UserTickets;
 
 namespace riga.services.riga.services.ticket_manager.IRepositories;
 
@@ -12,4 +13,12 @@ public interface ITicketRepository
 
     public Task<bool> update_user_ticket(UpdateUserTicketsDto updateUserTicketsDto,
         CancellationToken cancellationToken);
+
+    public Task<bool> pay_ticket(double TicketPrice, Guid UserId, CancellationToken cancellationToken);
+
+    public Task<List<UnregisteredTicketsResponse>> get_unregistered_tickets(Guid UserId, CancellationToken cancellationToken);
+    public Task<bool> validate_tickets(Guid UserId, CancellationToken cancellationToken);
+    
+    public Task<List<RigisteredTicketResponse>> get_valid_tickets(Guid UserId, CancellationToken cancellationToken);
+    public Task<List<HistoryOfTripsResponse>> get_history_of_trips(Guid UserId, CancellationToken cancellationToken);
 }

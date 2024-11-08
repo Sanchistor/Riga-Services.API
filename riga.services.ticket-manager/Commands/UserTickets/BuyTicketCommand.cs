@@ -5,10 +5,11 @@ using riga.services.Models;
 using riga.services.riga.services.authentication.Services.Guard;
 using riga.services.riga.services.ticket_manager.DTO.UserTickets;
 using riga.services.riga.services.ticket_manager.IRepositories;
+using riga.services.riga.services.ticket_manager.Responses.UserTickets;
 
 namespace riga.services.riga.services.ticket_manager.Commands.UserTickets;
 
-public class BuyTicketCommand: IRequest<bool>
+public class BuyTicketCommand: IRequest<PurchasedTicketResponse>
 {
     public BuyTicketDto buyTicketDto { get; set; }
 
@@ -18,7 +19,7 @@ public class BuyTicketCommand: IRequest<bool>
     }
 }
 
-public class BuyTicketCommandHandler : IRequestHandler<BuyTicketCommand, bool>
+public class BuyTicketCommandHandler : IRequestHandler<BuyTicketCommand, PurchasedTicketResponse>
 {
     private readonly AuthGuard _authGuard;
     private readonly ITicketRepository _ticketRepository;
@@ -29,25 +30,23 @@ public class BuyTicketCommandHandler : IRequestHandler<BuyTicketCommand, bool>
         _ticketRepository = ticketRepository;
     }
 
-    public async Task<bool> Handle(BuyTicketCommand request, CancellationToken cancellationToken)
+    public async Task<PurchasedTicketResponse> Handle(BuyTicketCommand request, CancellationToken cancellationToken)
     {
         return await PurchaseTicketAsync(request.buyTicketDto, cancellationToken);
     }
 
-    private async Task<bool> PurchaseTicketAsync(BuyTicketDto buyTicketDto, CancellationToken cancellationToken)
+    private async Task<PurchasedTicketResponse> PurchaseTicketAsync(BuyTicketDto buyTicketDto, CancellationToken cancellationToken)
     {
-        //TODO: Make a balance decreasing for user when buying tickets
         var userGuid = _authGuard.GetUserId();
-        if (userGuid == null)
-        {
-            return false;
-        }
-       
 
         var ticket = await _ticketRepository.get_ticket_data(buyTicketDto.TicketId, cancellationToken);
         if (ticket == null)
         {
-            return false;
+            return new PurchasedTicketResponse
+            {
+                Message = "Ticket not found",
+                Success = false
+            };
         }
 
         for (int i = 0; i < buyTicketDto.Number; i++)
@@ -63,13 +62,32 @@ public class BuyTicketCommandHandler : IRequestHandler<BuyTicketCommand, bool>
                 UserId = (Guid)userGuid,
                 Valid = true
             };
+            //TODO: fix bug with buying number of tickets and handle error
+            var ticket_payed = await _ticketRepository.pay_ticket(ticket.Price, (Guid)userGuid, cancellationToken);
+            if (!ticket_payed)
+            {
+                return new PurchasedTicketResponse
+                {
+                    Message = "Insufficient balance",
+                    Success = false
+                };
+            }
+            
             var saveResult = await _ticketRepository.save_user_tickets(userTicket, cancellationToken);
             if (!saveResult)
             {
-                return false; 
+                return new PurchasedTicketResponse
+                {
+                    Message = "Error occured",
+                    Success = false
+                };
             }
         }
 
-        return true;
+        return new PurchasedTicketResponse
+        {
+            Message = "Ticket purchased",
+            Success = true
+        };
     }
 }

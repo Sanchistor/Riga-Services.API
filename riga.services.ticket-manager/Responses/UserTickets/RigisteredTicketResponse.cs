@@ -8,4 +8,6 @@ public class RigisteredTicketResponse
     public bool TicketValid { get; set; }
     public DateTime? ValidUntil { get; set; }
     public DateTime CurrentTime { get; set; }
+    public bool? Success { get; set; }      
+    public string? Message { get; set; } 
 }

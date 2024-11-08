@@ -5,6 +5,7 @@ using riga.services.DbContext;
 using riga.services.Models;
 using riga.services.riga.services.authentication.Commands;
 using riga.services.riga.services.authentication.DTO;
+using riga.services.riga.services.authentication.Queries;
 using riga.services.riga.services.authentication.Responses;
 using riga.services.riga.services.authentication.Services;
 
@@ -54,5 +55,12 @@ public class AuthController : ControllerBase
         string token = jwtAuthenticationManager.Authenticate(user.Email, userLoginDto.password);
 
         return Ok(new { Token = token, Message = "Authentication successful!" });
+    }
+    
+    [Authorize]
+    [HttpGet, Route("Profile")]
+    public async Task<User> Get()
+    {
+        return await _mediator.Send(new GetProfileDataQuery());
     }
 }
