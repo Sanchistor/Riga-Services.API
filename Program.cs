@@ -16,13 +16,12 @@ using riga.services.riga.services.ticket_manager.Repositories;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
+// Configure Swagger to use the Bearer token
 builder.Services.AddSwaggerGen(c =>
 {
-    // Configure Swagger to use the Bearer token
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme.",
@@ -45,16 +44,19 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<ApiDbContext>(
     o => o.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
-    );
+);
+
 builder.Services.AddMediatR(typeof(Program));
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<ITicketRepository, TicketRepository>();
 builder.Services.AddScoped<AuthGuard>();
 
+// JWT Authentication setup
 var key = "Yh2k7QSu418CZg5p6X3Pna9L0Miy4D3Bvt0JVr87Uc0j69Kqw5R2Nmf4FWs03Hdx";
 builder.Services.AddAuthentication(x =>
 {
@@ -78,26 +80,20 @@ builder.Services.AddSingleton<JwtAuthenticationManager>(new JwtAuthenticationMan
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-// if (app.Environment.IsDevelopment())
-// {
-    app.UseSwagger();
-    app.UseSwaggerUI();
 
-    // app.UseSwagger();
-    // app.UseSwaggerUI(c =>
-    // {
-    //     c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
-    //     c.RoutePrefix = string.Empty; 
-    // });
-// }
+app.UseSwagger();
+app.UseSwaggerUI();
 
-app.UseAuthentication();
-app.UseAuthorization();
-app.UseRouting();
+// Ensure routing is called before authentication and authorization
+app.UseRouting(); // Move this line to the correct position
+
+app.UseAuthentication(); // Authenticate requests before authorization
+app.UseAuthorization(); // Then authorize requests
 
 app.MapControllers();
 
 app.Run("http://0.0.0.0:5000");
+
 app.Lifetime.ApplicationStarted.Register(() =>
 {
     Console.WriteLine("Application started and listening on port 5000.");
