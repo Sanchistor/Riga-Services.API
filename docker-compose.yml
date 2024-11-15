@@ -36,7 +36,7 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf  # Mount your NGINX configuration file
     ports:
       - "8081:80"
-      - "443:443"
+      - "8443:443"
     depends_on:
       - web  # Ensure web service is up before NGINX starts
     networks:
