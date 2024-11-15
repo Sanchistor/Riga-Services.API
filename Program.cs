@@ -73,10 +73,10 @@ builder.Services.AddAuthentication(x =>
     };
 });
 
-builder.WebHost.ConfigureKestrel(serverOptions =>
-{
-    serverOptions.Listen(IPAddress.Any, 5000); // Listen on port 5000
-});
+// builder.WebHost.ConfigureKestrel(serverOptions =>
+// {
+//     serverOptions.Listen(IPAddress.Any, 5275); // Listen on port 5000
+// });
 
 builder.Services.AddSingleton<JwtAuthenticationManager>(new JwtAuthenticationManager(key, builder.Services.BuildServiceProvider().GetService<ApiDbContext>()));
 
@@ -87,6 +87,13 @@ var app = builder.Build();
 // {
     app.UseSwagger();
     app.UseSwaggerUI();
+
+    // app.UseSwagger();
+    // app.UseSwaggerUI(c =>
+    // {
+    //     c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
+    //     c.RoutePrefix = string.Empty; 
+    // });
 // }
 app.Lifetime.ApplicationStarted.Register(() =>
 {

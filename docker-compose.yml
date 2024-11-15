@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "5000:80"  # Expose port 5000 for your app
+      - "5000:5000"  # Expose port 5000 for your app
     environment:
       - ASPNETCORE_ENVIRONMENT=Production  # Set the environment to Production
       - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}  # Use environment variable from .env file
