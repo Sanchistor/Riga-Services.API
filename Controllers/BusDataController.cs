@@ -35,6 +35,7 @@ namespace riga.services.Controllers
         }
 
         // POST: api/BusData
+        //TODO: add logic that only admin can modify post
         [HttpPost]
         public async Task<bool> Post([FromBody] CreateBusDataDto createBusDataDto)
         {
@@ -44,6 +45,7 @@ namespace riga.services.Controllers
         }
 
         // DELETE: api/BusData/5
+        //TODO: add logic that only admin can modify delete
         [HttpDelete("{id}")]
         public async Task<bool> Delete(Guid id)
         {

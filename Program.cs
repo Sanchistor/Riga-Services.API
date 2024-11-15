@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -72,19 +73,28 @@ builder.Services.AddAuthentication(x =>
     };
 });
 
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.Listen(IPAddress.Any, 5000); // Listen on port 5000
+});
+
 builder.Services.AddSingleton<JwtAuthenticationManager>(new JwtAuthenticationManager(key, builder.Services.BuildServiceProvider().GetService<ApiDbContext>()));
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+// if (app.Environment.IsDevelopment())
+// {
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+// }
+app.Lifetime.ApplicationStarted.Register(() =>
+{
+    Console.WriteLine("Application started and listening on port 5000.");
+});
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseRouting();
 
 app.MapControllers();
 
