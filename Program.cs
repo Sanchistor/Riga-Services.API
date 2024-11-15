@@ -73,11 +73,6 @@ builder.Services.AddAuthentication(x =>
     };
 });
 
-// builder.WebHost.ConfigureKestrel(serverOptions =>
-// {
-//     serverOptions.Listen(IPAddress.Any, 5275); // Listen on port 5000
-// });
-
 builder.Services.AddSingleton<JwtAuthenticationManager>(new JwtAuthenticationManager(key, builder.Services.BuildServiceProvider().GetService<ApiDbContext>()));
 
 var app = builder.Build();
@@ -95,14 +90,15 @@ var app = builder.Build();
     //     c.RoutePrefix = string.Empty; 
     // });
 // }
-app.Lifetime.ApplicationStarted.Register(() =>
-{
-    Console.WriteLine("Application started and listening on port 5000.");
-});
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseRouting();
 
 app.MapControllers();
 
-app.Run();
+app.Run("http://0.0.0.0:5000");
+app.Lifetime.ApplicationStarted.Register(() =>
+{
+    Console.WriteLine("Application started and listening on port 5000.");
+});
