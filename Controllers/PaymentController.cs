@@ -1,11 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using riga.services.riga.services.payment.Commands;
+using riga.services.riga.services.payment.DTO;
+using riga.services.riga.services.payment.Responses;
 
 namespace riga.services.Controllers
 {
@@ -22,13 +20,23 @@ namespace riga.services.Controllers
             _mediator = mediator;
         }
 
-        
-        //Update(post) balance update
+
 
         // POST: api/Payment
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult<BalanceUpdatedResponse>> Post([FromBody] BalanceDto balanceDto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var command = new UpdateBalanceCommand(balanceDto);
+            var result = await _mediator.Send(command);
+
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            return Ok(result);
         }
+
     }
 }
