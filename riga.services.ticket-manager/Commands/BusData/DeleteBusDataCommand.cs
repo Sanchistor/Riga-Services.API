@@ -1,9 +1,12 @@
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using riga.services.DbContext;
+using riga.services.riga.services.authentication.Services.Guard;
+using riga.services.riga.services.ticket_manager.Responses;
 
 namespace riga.services.riga.services.ticket_manager.Commands;
 
-public class DeleteBusDataCommand:IRequest<bool>
+public class DeleteBusDataCommand:IRequest<AdminResponse>
 {
     public Guid Id { get; set; }
 
@@ -13,31 +16,55 @@ public class DeleteBusDataCommand:IRequest<bool>
     }
 }
 
-public class DeleteBusDataCommandHandler: IRequestHandler<DeleteBusDataCommand, bool>
+public class DeleteBusDataCommandHandler: IRequestHandler<DeleteBusDataCommand, AdminResponse>
 {
     private readonly ApiDbContext _context;
+    private readonly AuthGuard _authGuard;
 
-    public DeleteBusDataCommandHandler(ApiDbContext context)
+    public DeleteBusDataCommandHandler(ApiDbContext context, AuthGuard authGuard)
     {
+        _authGuard = authGuard;
         _context = context;
     }
     
-    public async Task<bool> Handle(DeleteBusDataCommand request, CancellationToken cancellationToken)
+    public async Task<AdminResponse> Handle(DeleteBusDataCommand request, CancellationToken cancellationToken)
     {
         return await DeleteAsync(request.Id, cancellationToken);
     }
 
-    private async Task<bool> DeleteAsync(Guid requestId, CancellationToken cancellationToken)
+    private async Task<AdminResponse> DeleteAsync(Guid requestId, CancellationToken cancellationToken)
     {
-        var bus = await _context.BusData.FindAsync(new object[] { requestId }, cancellationToken);
-        if (bus == null)
+        var userGuid = _authGuard.GetUserId();
+        var userRole = await _context.Users
+            .Where(user => user.Id == userGuid)
+            .Select(user => user.Role)
+            .FirstOrDefaultAsync();
+        
+        if (userRole == 1)
         {
-            return false;
+            var bus = await _context.BusData.FindAsync(new object[] { requestId }, cancellationToken);
+            if (bus == null)
+            {
+                return new AdminResponse
+                {
+                    Message = "Bus data not found!",
+                    Success = false
+                };
+            }
+
+            _context.BusData.Remove(bus);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return new AdminResponse
+            {
+                Message = "Bus data deleted!",
+                Success = true
+            };
         }
-
-        _context.BusData.Remove(bus);
-        await _context.SaveChangesAsync(cancellationToken);
-
-        return true;
+        return new AdminResponse
+        {
+            Message = "Insufficient privileges, you have to be admin!",
+            Success = false
+        };
     }
 }
