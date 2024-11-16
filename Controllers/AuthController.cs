@@ -27,6 +27,7 @@ public class AuthController : ControllerBase
     }
     
     [HttpPost("Register")]
+    //TODO: Validate the email, phone, existence in db, etc and make the normal output type
     public async Task<IActionResult> CreateUserAndProfile(CreateProfileDto createProfileDto)
     {
         var command = new CreateUserCommand { createProfileDto = createProfileDto };
@@ -36,6 +37,7 @@ public class AuthController : ControllerBase
 
     [AllowAnonymous]
     [HttpPost("Authorize")]
+    //TODO: handle email type input and make validations and error messages
     public ActionResult<TokenResponse> AuthUser(UserLoginDto userLoginDto)
     {
         User user = _context.Users.FirstOrDefault(u => u.Email == userLoginDto.email);
