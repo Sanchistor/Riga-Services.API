@@ -29,6 +29,9 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="riga.services.payment\Commands\" />
+      <Folder Include="riga.services.payment\DTO\" />
+      <Folder Include="riga.services.payment\Repository\" />
       <Folder Include="riga.services.ticket-manager\Services\" />
     </ItemGroup>
 
