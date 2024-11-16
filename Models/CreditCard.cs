@@ -7,7 +7,7 @@ public class CreditCard
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
-    public int CardNum { get; set; }
+    public String CardNum { get; set; }
     public String Date { get; set; }
     public int Cvv { get; set; }
 

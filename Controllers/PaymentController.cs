@@ -22,20 +22,12 @@ namespace riga.services.Controllers
 
 
 
-        // POST: api/Payment
-        [HttpPost]
-        public async Task<ActionResult<BalanceUpdatedResponse>> Post([FromBody] BalanceDto balanceDto)
+        // POST: api/Payment/createCard
+        [HttpPost("createCard")]
+        public async Task<ActionResult<BalanceUpdatedResponse>> AddBalance([FromBody] CardDataDto cardDataDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var command = new UpdateBalanceCommand(balanceDto);
-            var result = await _mediator.Send(command);
-
-            if (!result.Success)
-                return BadRequest(result.Message);
-
-            return Ok(result);
+            var response = await _mediator.Send(new CreateNewCardCommand(cardDataDto));
+            return Ok(response);
         }
 
     }
