@@ -62,7 +62,6 @@ public class BuyTicketCommandHandler : IRequestHandler<BuyTicketCommand, Purchas
                 UserId = (Guid)userGuid,
                 Valid = true
             };
-            //TODO: fix bug with buying number of tickets and handle error
             var ticket_payed = await _ticketRepository.pay_ticket(ticket.Price, (Guid)userGuid, cancellationToken);
             if (!ticket_payed)
             {

@@ -23,13 +23,16 @@ namespace riga.services.Controllers
         // POST: api/Payment/createCard
         [HttpPost("createCard")]
         //TODO: make cvv string to handle 0 on the beginning and handle number, date, cvv validation
+
         public async Task<ActionResult<BalanceUpdatedResponse>> CreateCard([FromBody] CardDataDto cardDataDto)
+
         {
             var response = await _mediator.Send(new CreateNewCardCommand(cardDataDto));
             return Ok(response);
         }
         
         [HttpPost("updateBalance")]
+
         public async Task<ActionResult<BalanceUpdatedResponse>> UpdateBalance([FromBody] CardDataDto cardDataDto)
         {
             var response = await _mediator.Send(new UpdateBalanceCommand(cardDataDto));

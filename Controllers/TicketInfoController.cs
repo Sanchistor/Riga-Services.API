@@ -35,9 +35,8 @@ namespace riga.services.Controllers
         }
 
         // POST: api/Ticket
-        //TODO: add logic that only admin can modify post
         [HttpPost]
-        public async Task<bool> Post([FromBody] CreateTicketDto createTicketDto)
+        public async Task<AdminResponse> Post([FromBody] CreateTicketDto createTicketDto)
         {
             var command = new CreateTicketInfoCommand(createTicketDto);
             var result = await _mediator.Send(command);
@@ -45,8 +44,7 @@ namespace riga.services.Controllers
         }
         
         [HttpDelete("{id}")]
-        //TODO: add logic that only admin can modify delete
-        public async Task<bool> Delete(Guid id)
+        public async Task<AdminResponse> Delete(Guid id)
         {
             var command = new DeleteTicketInfoCommand(id);
             return await _mediator.Send(command);
