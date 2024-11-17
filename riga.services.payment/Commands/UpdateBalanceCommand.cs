@@ -19,10 +19,12 @@ public class UpdateBalanceCommand : IRequest<BalanceUpdatedResponse>
 
 public class UpdateBalanceCommandHandler : IRequestHandler<UpdateBalanceCommand, BalanceUpdatedResponse>
 {
+    private readonly AuthGuard _authGuard;
     private readonly IUpdateBalanceRepository _repository;
 
-    public UpdateBalanceCommandHandler(IUpdateBalanceRepository repository)
+    public UpdateBalanceCommandHandler(IUpdateBalanceRepository repository, AuthGuard authGuard)
     {
+        _authGuard = authGuard;
         _repository = repository;
     }
 
