@@ -15,37 +15,12 @@ public class CardDataRepository : ICardDataRepository
         _context = context;
     }
 
-    public async Task<BalanceUpdatedResponse> AddBalance(CardDataDto cardDataDto, Guid userGuid, CancellationToken cancellationToken)
-    {
-        //
-        // var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == creditCard.UserId);
-        //
-        // if (user == null)
-        // {
-        //     return new BalanceUpdatedResponse
-        //     {
-        //         Success = false,
-        //         Message = "User not found."
-        //     };
-        // }
-        //
-        // // Add the balance to the user's account
-        // user.Balance += balanceDto.Amount;
-        // _context.Users.Update(user);
-        // await _context.SaveChangesAsync();
-        //
-        // return new BalanceUpdatedResponse
-        // {
-        //     Success = true,
-        //     Message = "Balance updated successfully."
-        // };
-        return null;
-    }
 
-    public async Task<CreditCard> GetCreditCard(Guid userGuid, String CardNum, CancellationToken cancellationToken)
+
+    public async Task<CreditCard> GetCreditCard(Guid userGuid, String cardNum, CancellationToken cancellationToken)
     {
         var creditCard = await _context.CreditCard
-            .FirstOrDefaultAsync(c => c.UserId == userGuid && c.CardNum == CardNum, cancellationToken);
+            .FirstOrDefaultAsync(c => c.UserId == userGuid && c.CardNum == cardNum, cancellationToken);
 
       return creditCard;
     }
@@ -65,5 +40,20 @@ public class CardDataRepository : ICardDataRepository
         
         return true;
     }
+    
+    
+    public async Task<Guid?> GetUserIdByCardNumber(String cardNum, CancellationToken cancellationToken)
+    {
+        var creditCard = await _context.CreditCard
+            .FirstOrDefaultAsync(c => c.CardNum == cardNum, cancellationToken);
+
+        if (creditCard == null)
+        {
+            return null;
+        }
+        
+        return creditCard.UserId;
+    }
+
     
 }

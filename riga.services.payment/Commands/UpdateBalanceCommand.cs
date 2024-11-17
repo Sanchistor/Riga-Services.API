@@ -9,41 +9,54 @@ namespace riga.services.riga.services.payment.Commands;
 
 public class UpdateBalanceCommand : IRequest<BalanceUpdatedResponse>
 {
-    public BalanceDto BalanceDto { get; set; }
+    public CardDataDto CardDataDto { get; }
 
-    public UpdateBalanceCommand(BalanceDto balanceDto)
+    public UpdateBalanceCommand(CardDataDto cardDataDto)
     {
-        BalanceDto = balanceDto;
+        CardDataDto = cardDataDto;
     }
 }
 
 public class UpdateBalanceCommandHandler : IRequestHandler<UpdateBalanceCommand, BalanceUpdatedResponse>
 {
-    
-    private readonly ICardDataRepository _cardDataRepository;
     private readonly AuthGuard _authGuard;
-    
-    public UpdateBalanceCommandHandler(ICardDataRepository cardDataRepository, AuthGuard authGuard)
-    {
-        _cardDataRepository = cardDataRepository;
-        _authGuard = authGuard;
-    }
-    
-    // public async Task<BalanceUpdatedResponse> Handle(UpdateBalanceCommand request, CancellationToken cancellationToken)
-    // {
-    //     // throw new NotImplementedException();
-    //     return await this.UpdateBalance(request.BalanceDto, cancellationToken);
-    // }
-    //
-    // private async Task<BalanceUpdatedResponse> UpdateBalance(BalanceDto balanceDto, CreditCard creditCard, CancellationToken cancellationToken)
-    // {
-    //     
-    //
-    //     return null;
-    // }
+    private readonly IUpdateBalanceRepository _repository;
+    private readonly ICardDataRepository _cardDataRepository;
 
-    public Task<BalanceUpdatedResponse> Handle(UpdateBalanceCommand request, CancellationToken cancellationToken)
+    public UpdateBalanceCommandHandler(IUpdateBalanceRepository balanceRepository, ICardDataRepository cardDataRepository, AuthGuard authGuard)
     {
-        throw new NotImplementedException();
+        _authGuard = authGuard;
+        _repository = balanceRepository;
+        _cardDataRepository = cardDataRepository;
+    }
+
+    public async Task<BalanceUpdatedResponse> Handle(UpdateBalanceCommand request, CancellationToken cancellationToken)
+    {
+        
+        var userId = _authGuard.GetUserId();
+        if (_cardDataRepository.GetCreditCard((Guid)userId, request.CardDataDto.CardNum, cancellationToken)==null)
+        {
+            return new BalanceUpdatedResponse
+            {
+                Succes =  false,
+                Message = "Balance not updated. Card not matches to user."
+            };
+        }
+        var success = await _repository.IncreaseBalance(request.CardDataDto, (Guid)userId, cancellationToken);
+        if (!success)
+        {
+            return new BalanceUpdatedResponse
+            {
+                Succes =  false,
+                Message = "Balance not updated. Errors occured"
+            };
+        }
+
+        return new BalanceUpdatedResponse
+        {
+            Succes =  true,
+            Message = "Balance updated successfully"
+        };
     }
 }
+

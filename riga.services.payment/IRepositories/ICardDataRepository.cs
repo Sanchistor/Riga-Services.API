@@ -6,12 +6,7 @@ namespace riga.services.riga.services.payment.IRepositories;
 
 public interface ICardDataRepository
 {
-
-    public Task<BalanceUpdatedResponse> AddBalance(CardDataDto cardDataDto, Guid userGuid, CancellationToken cancellationToken);
-
-    public Task<CreditCard> GetCreditCard(Guid userGuid, String CardNum, CancellationToken cancellationToken);
-
+    public Task<CreditCard> GetCreditCard(Guid userGuid, String cardNum, CancellationToken cancellationToken);
+    public Task<Guid?> GetUserIdByCardNumber(string cardNum, CancellationToken cancellationToken);
     public Task<bool> CreateNewCreditCard(Guid userGuid, CardDataDto cardDataDto, CancellationToken cancellationToken);
-    
-    // public Task<bool> updateBalance(CreditCard creditCard, double , CancellationToken cancellationToken);
 }
