@@ -9,41 +9,36 @@ namespace riga.services.riga.services.payment.Commands;
 
 public class UpdateBalanceCommand : IRequest<BalanceUpdatedResponse>
 {
-    public BalanceDto BalanceDto { get; set; }
+    public CardDataDto CardDataDto { get; }
 
-    public UpdateBalanceCommand(BalanceDto balanceDto)
+    public UpdateBalanceCommand(CardDataDto cardDataDto)
     {
-        BalanceDto = balanceDto;
+        CardDataDto = cardDataDto;
     }
 }
 
 public class UpdateBalanceCommandHandler : IRequestHandler<UpdateBalanceCommand, BalanceUpdatedResponse>
 {
-    
-    private readonly ICardDataRepository _cardDataRepository;
-    private readonly AuthGuard _authGuard;
-    
-    public UpdateBalanceCommandHandler(ICardDataRepository cardDataRepository, AuthGuard authGuard)
-    {
-        _cardDataRepository = cardDataRepository;
-        _authGuard = authGuard;
-    }
-    
-    // public async Task<BalanceUpdatedResponse> Handle(UpdateBalanceCommand request, CancellationToken cancellationToken)
-    // {
-    //     // throw new NotImplementedException();
-    //     return await this.UpdateBalance(request.BalanceDto, cancellationToken);
-    // }
-    //
-    // private async Task<BalanceUpdatedResponse> UpdateBalance(BalanceDto balanceDto, CreditCard creditCard, CancellationToken cancellationToken)
-    // {
-    //     
-    //
-    //     return null;
-    // }
+    private readonly IUpdateBalanceRepository _repository;
 
-    public Task<BalanceUpdatedResponse> Handle(UpdateBalanceCommand request, CancellationToken cancellationToken)
+    public UpdateBalanceCommandHandler(IUpdateBalanceRepository repository)
     {
-        throw new NotImplementedException();
+        _repository = repository;
+    }
+
+    public async Task<BalanceUpdatedResponse> Handle(UpdateBalanceCommand request, CancellationToken cancellationToken)
+    {
+        var success = await _repository.IncreaseBalance(request.CardDataDto, cancellationToken);
+        if (!success)
+        {
+            return null;
+        }
+
+        return new BalanceUpdatedResponse
+        {
+            Succes =  true,
+            Message = "Balance updated successfully"
+        };
     }
 }
+

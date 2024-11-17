@@ -15,32 +15,7 @@ public class CardDataRepository : ICardDataRepository
         _context = context;
     }
 
-    public async Task<BalanceUpdatedResponse> AddBalance(CardDataDto cardDataDto, Guid userGuid, CancellationToken cancellationToken)
-    {
-        //
-        // var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == creditCard.UserId);
-        //
-        // if (user == null)
-        // {
-        //     return new BalanceUpdatedResponse
-        //     {
-        //         Success = false,
-        //         Message = "User not found."
-        //     };
-        // }
-        //
-        // // Add the balance to the user's account
-        // user.Balance += balanceDto.Amount;
-        // _context.Users.Update(user);
-        // await _context.SaveChangesAsync();
-        //
-        // return new BalanceUpdatedResponse
-        // {
-        //     Success = true,
-        //     Message = "Balance updated successfully."
-        // };
-        return null;
-    }
+
 
     public async Task<CreditCard> GetCreditCard(Guid userGuid, String CardNum, CancellationToken cancellationToken)
     {
@@ -57,7 +32,8 @@ public class CardDataRepository : ICardDataRepository
             CardNum = cardDataDto.CardNum,
             Date = cardDataDto.Date,
             Cvv = cardDataDto.Cvv,
-            UserId = userGuid
+            UserId = userGuid,
+            Balance = cardDataDto.balance
         };
         
         _context.CreditCard.Add(newCard);

@@ -30,12 +30,18 @@ namespace riga.services.Controllers
         }
         
         [HttpPost("updateBalance")]
-        //TODO: Finish this endpoint to handle specific card number
-        public async Task<ActionResult<BalanceUpdatedResponse>> UpdateBalance([FromBody] BalanceDto balanceDto)
+        public async Task<ActionResult<BalanceUpdatedResponse>> UpdateBalance([FromBody] CardDataDto cardDataDto)
         {
-            var response = await _mediator.Send(new UpdateBalanceCommand(balanceDto));
+            var response = await _mediator.Send(new UpdateBalanceCommand(cardDataDto));
+
+            if (response == null)
+            {
+                return NotFound(new { message = "Card not found or balance update failed" });
+            }
+
             return Ok(response);
         }
+
         //TODO: Make method to get all cards for the user
     }
 }

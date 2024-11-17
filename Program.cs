@@ -58,6 +58,7 @@ builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<ITicketRepository, TicketRepository>();
 builder.Services.AddScoped<AuthGuard>();
 builder.Services.AddScoped<ICardDataRepository, CardDataRepository>();
+builder.Services.AddScoped<IUpdateBalanceRepository, UpdateBalanceRepository>();
 
 // JWT Authentication setup
 var key = "Yh2k7QSu418CZg5p6X3Pna9L0Miy4D3Bvt0JVr87Uc0j69Kqw5R2Nmf4FWs03Hdx";

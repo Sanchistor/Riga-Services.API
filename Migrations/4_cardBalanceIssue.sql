@@ -1,0 +1,1 @@
+ALTER TABLE "CreditCard" add column "Balance" float;
