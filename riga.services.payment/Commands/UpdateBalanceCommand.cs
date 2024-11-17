@@ -21,19 +21,35 @@ public class UpdateBalanceCommandHandler : IRequestHandler<UpdateBalanceCommand,
 {
     private readonly AuthGuard _authGuard;
     private readonly IUpdateBalanceRepository _repository;
+    private readonly ICardDataRepository _cardDataRepository;
 
-    public UpdateBalanceCommandHandler(IUpdateBalanceRepository repository, AuthGuard authGuard)
+    public UpdateBalanceCommandHandler(IUpdateBalanceRepository balanceRepository, ICardDataRepository cardDataRepository, AuthGuard authGuard)
     {
         _authGuard = authGuard;
-        _repository = repository;
+        _repository = balanceRepository;
+        _cardDataRepository = cardDataRepository;
     }
 
     public async Task<BalanceUpdatedResponse> Handle(UpdateBalanceCommand request, CancellationToken cancellationToken)
     {
+        
+        var userId = _authGuard.GetUserId();
+        if (_cardDataRepository.GetCreditCard((Guid)userId, request.CardDataDto.CardNum, cancellationToken)==null)
+        {
+            return new BalanceUpdatedResponse
+            {
+                Succes =  false,
+                Message = "Balance not updated. Card not matches to user."
+            };
+        }
         var success = await _repository.IncreaseBalance(request.CardDataDto, cancellationToken);
         if (!success)
         {
-            return null;
+            return new BalanceUpdatedResponse
+            {
+                Succes =  false,
+                Message = "Balance not updated. Errors occured"
+            };
         }
 
         return new BalanceUpdatedResponse

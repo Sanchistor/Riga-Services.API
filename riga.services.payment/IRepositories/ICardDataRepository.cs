@@ -6,7 +6,7 @@ namespace riga.services.riga.services.payment.IRepositories;
 
 public interface ICardDataRepository
 {
-    public Task<CreditCard> GetCreditCard(Guid userGuid, String CardNum, CancellationToken cancellationToken);
+    public Task<CreditCard> GetCreditCard(Guid userGuid, String cardNum, CancellationToken cancellationToken);
 
     public Task<bool> CreateNewCreditCard(Guid userGuid, CardDataDto cardDataDto, CancellationToken cancellationToken);
 }
