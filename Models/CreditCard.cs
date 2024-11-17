@@ -9,7 +9,7 @@ public class CreditCard
     public Guid Id { get; set; }
     public String CardNum { get; set; }
     public String Date { get; set; }
-    public int Cvv { get; set; }
+    public string Cvv { get; set; }
     
     public Guid UserId { get; set; }
     public User User { get; set; }
