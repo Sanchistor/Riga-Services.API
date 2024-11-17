@@ -17,10 +17,10 @@ public class CardDataRepository : ICardDataRepository
 
 
 
-    public async Task<CreditCard> GetCreditCard(Guid userGuid, String CardNum, CancellationToken cancellationToken)
+    public async Task<CreditCard> GetCreditCard(Guid userGuid, String cardNum, CancellationToken cancellationToken)
     {
         var creditCard = await _context.CreditCard
-            .FirstOrDefaultAsync(c => c.UserId == userGuid && c.CardNum == CardNum, cancellationToken);
+            .FirstOrDefaultAsync(c => c.UserId == userGuid && c.CardNum == cardNum, cancellationToken);
 
       return creditCard;
     }
@@ -32,8 +32,7 @@ public class CardDataRepository : ICardDataRepository
             CardNum = cardDataDto.CardNum,
             Date = cardDataDto.Date,
             Cvv = cardDataDto.Cvv,
-            UserId = userGuid,
-            Balance = cardDataDto.balance
+            UserId = userGuid
         };
         
         _context.CreditCard.Add(newCard);
@@ -41,5 +40,20 @@ public class CardDataRepository : ICardDataRepository
         
         return true;
     }
+    
+    
+    public async Task<Guid?> GetUserIdByCardNumber(String cardNum, CancellationToken cancellationToken)
+    {
+        var creditCard = await _context.CreditCard
+            .FirstOrDefaultAsync(c => c.CardNum == cardNum, cancellationToken);
+
+        if (creditCard == null)
+        {
+            return null;
+        }
+        
+        return creditCard.UserId;
+    }
+
     
 }

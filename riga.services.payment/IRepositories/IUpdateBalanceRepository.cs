@@ -5,5 +5,5 @@ namespace riga.services.riga.services.payment.IRepositories;
 
 public interface IUpdateBalanceRepository
 {
-    public Task<bool> IncreaseBalance(CardDataDto cardDataDto, CancellationToken cancellationToken);
+    public Task<bool> IncreaseBalance(CardDataDto cardDataDto, Guid userId, CancellationToken cancellationToken);
 }

@@ -30,7 +30,6 @@ public class CreateNewCardCommandHandler : IRequestHandler<CreateNewCardCommand,
     public async Task<CreateCardResponse> Handle(CreateNewCardCommand request, CancellationToken cancellationToken)
     {
         var userGuid = _authGuard.GetUserId();
-        // var response = await _balanceRepository.AddBalance(request.BalanceDto, (Guid)userGuid, cancellationToken);
         var userCard = await _cardDataRepository.GetCreditCard((Guid)userGuid, request.CardDataDto.CardNum, cancellationToken);
 
         if (userCard != null)

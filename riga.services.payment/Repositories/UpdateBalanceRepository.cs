@@ -1,35 +1,37 @@
 using Microsoft.EntityFrameworkCore;
 using riga.services.DbContext;
-
+using riga.services.Models;
 using riga.services.riga.services.payment.DTO;
 using riga.services.riga.services.payment.IRepositories;
 
 namespace riga.services.riga.services.payment.Repositories;
 
-public class UpdateBalanceRepository:IUpdateBalanceRepository
+public class UpdateBalanceRepository : IUpdateBalanceRepository
 {
-    
     private readonly ApiDbContext _context;
-    
-    public UpdateBalanceRepository(ApiDbContext context)
+
+
+    public UpdateBalanceRepository(ApiDbContext context, ICardDataRepository cardDataRepository)
     {
         _context = context;
+
     }
-    
-    public async Task<bool> IncreaseBalance(CardDataDto cardDataDto, CancellationToken cancellationToken)
+
+    public async Task<bool> IncreaseBalance(CardDataDto cardDataDto, Guid userId, CancellationToken cancellationToken)
     {
 
-        var existingCard = await _context.CreditCard
-            .FirstOrDefaultAsync(c => c.CardNum == cardDataDto.CardNum, cancellationToken);
-
-        if (existingCard == null)
+        var user = await _context.Users
+            .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+    
+        if (user == null)
         {
             return false;
         }
 
-        existingCard.Balance += cardDataDto.balance;
+        user.Balance += cardDataDto.Balance;
 
-        _context.CreditCard.Update(existingCard);
+        _context.Users.Update(user);
+    
         await _context.SaveChangesAsync(cancellationToken);
 
         return true;

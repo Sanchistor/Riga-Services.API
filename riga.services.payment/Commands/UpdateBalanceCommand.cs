@@ -42,7 +42,7 @@ public class UpdateBalanceCommandHandler : IRequestHandler<UpdateBalanceCommand,
                 Message = "Balance not updated. Card not matches to user."
             };
         }
-        var success = await _repository.IncreaseBalance(request.CardDataDto, cancellationToken);
+        var success = await _repository.IncreaseBalance(request.CardDataDto, (Guid)userId, cancellationToken);
         if (!success)
         {
             return new BalanceUpdatedResponse
