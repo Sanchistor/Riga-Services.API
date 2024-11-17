@@ -34,7 +34,7 @@ public class UpdateBalanceCommandHandler : IRequestHandler<UpdateBalanceCommand,
     {
         
         var userId = _authGuard.GetUserId();
-        if (_cardDataRepository.GetCreditCard((Guid)userId, request.CardDataDto.CardNum, cancellationToken)==null)
+        if (await _cardDataRepository.GetCreditCard((Guid)userId, request.CardDataDto.CardNum, cancellationToken)==null)
         {
             return new BalanceUpdatedResponse
             {
